@@ -14,7 +14,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install --prefix bb/node-bulletin-board/bulletin-board-app
+          npm install --prefix bulletin-board-app
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
