@@ -33,9 +33,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./bulletin-board-app           # Specify the directory containing Dockerfile
+          file: ./bulletin-board-app/Dockerfile   # Path to Dockerfile
           push: true
-          tag_with_sha: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ env.REPO_NAME }}:latest
