@@ -1,19 +1,16 @@
 on:
-  pull_request:
+  push:
     branches: 
       - main
-    types:
-      - closed
 env:
   REPO_NAME: tylers5x/itm350-tylers5x-bb
 
 jobs:
-  if_merged:
-    if: github.event.pull_request.merged == true
+  if_pushed:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo The PR was merged
+          echo Code was pushed to the main branch
 
       - name: Check out the repo
         uses: actions/checkout@v4
