@@ -1,0 +1,1 @@
+docker run -d -p 8080:8080 tylers5x/itm350-tyler:itm350-bb:2.0 .
