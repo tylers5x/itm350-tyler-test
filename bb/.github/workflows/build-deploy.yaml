@@ -12,14 +12,18 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      # Step 2: Debug the directory structure to confirm paths
+      # Step 2: Debug repository structure and paths
       - name: Debug repository structure
         run: |
+          echo "Debugging directory structure..."
           ls -R
+          echo "Attempting to display package.json..."
+          cat bulletin-board-app/package.json || echo "package.json not found"
 
       # Step 3: Install dependencies
       - name: Install dependencies
         run: |
+          echo "Installing dependencies..."
           npm install --prefix bulletin-board-app
 
       # Step 4: Log in to Docker Hub
