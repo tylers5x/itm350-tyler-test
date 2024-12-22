@@ -4,26 +4,32 @@ on:
       - build-automation
 
 jobs:
-  if_pushed:
+  build_and_push:
     runs-on: ubuntu-latest
 
     steps:
       # Step 1: Check out the repository
-      - name: Check out the repo
+      - name: Check out the repository
         uses: actions/checkout@v4
 
-      # Step 2: Debug repository structure and paths
-      - name: Debug repository structure
+      # Step 2: Debug repository structure to confirm paths
+      - name: Debug directory structure
         run: |
           echo "Debugging directory structure..."
           ls -R
-          echo "Attempting to display package.json..."
-          cat bulletin-board-app/package.json || echo "package.json not found"
+          echo "Checking for package.json..."
+          if [ -f bulletin-board-app/package.json ]; then
+            echo "package.json found at bulletin-board-app/package.json"
+            cat bulletin-board-app/package.json
+          else
+            echo "package.json NOT found in bulletin-board-app"
+            exit 1
+          fi
 
       # Step 3: Install dependencies
       - name: Install dependencies
         run: |
-          echo "Installing dependencies..."
+          echo "Running npm install in bulletin-board-app..."
           npm install --prefix bulletin-board-app
 
       # Step 4: Log in to Docker Hub
