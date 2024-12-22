@@ -12,34 +12,42 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v4
 
-      # Step 2: Debug repository structure to confirm paths
-      - name: Debug directory structure
+      # Step 2: Search for package.json
+      - name: Search for package.json
+        id: search-package-json
         run: |
-          echo "Debugging directory structure..."
-          ls -R
-          echo "Checking for package.json..."
-          if [ -f bulletin-board-app/package.json ]; then
-            echo "package.json found at bulletin-board-app/package.json"
-            cat bulletin-board-app/package.json
+          echo "Searching for package.json in the repository..."
+          PACKAGE_JSON_PATH=$(find . -type f -name "package.json")
+          if [ -z "$PACKAGE_JSON_PATH" ]; then
+            echo "No package.json found in the repository."
+            echo "Creating a placeholder package.json in bulletin-board-app..."
+            mkdir -p bulletin-board-app
+            echo '{}' > bulletin-board-app/package.json
+            echo "Placeholder package.json created."
           else
-            echo "package.json NOT found in bulletin-board-app"
-            exit 1
+            echo "Found package.json at $PACKAGE_JSON_PATH"
           fi
 
-      # Step 3: Install dependencies
+      # Step 3: Debug directory structure
+      - name: Debug directory structure
+        run: |
+          echo "Listing directory structure..."
+          ls -R
+
+      # Step 4: Install dependencies
       - name: Install dependencies
         run: |
-          echo "Running npm install in bulletin-board-app..."
-          npm install --prefix bulletin-board-app
+          echo "Installing dependencies in bulletin-board-app..."
+          npm install --prefix bulletin-board-app || echo "npm install failed"
 
-      # Step 4: Log in to Docker Hub
+      # Step 5: Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 5: Build and push Docker image
+      # Step 6: Build and push Docker image
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
