@@ -1,0 +1,10 @@
+ami                         = "ami-0e252be8f4dfa2c0d" # Replace with a valid AMI ID
+cluster_name                = "bb-cluster"
+container_image             = "my-docker-repo/bulletinboard:latest" # Replace with the actual image
+container_port              = 8080
+instance_name_prefix        = "bb-node"
+instance_type               = "t2.micro"
+lab_role                    = "arn:aws:iam::123456789012:role/LabRole" # Replace with your IAM role ARN
+region                      = "us-west-2"
+vpc_cidr                    = "10.0.0.0/16"
+vpc_prefix                  = "ecs-vpc"
