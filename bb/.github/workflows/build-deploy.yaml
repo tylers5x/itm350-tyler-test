@@ -12,7 +12,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      # Debug the repository structure
+      # Debug: List repository structure
       - name: Debug repository structure
         run: |
           ls -R
@@ -20,7 +20,7 @@ jobs:
       # Install dependencies
       - name: Install dependencies
         run: |
-          npm install --prefix bulletin-board-app
+          npm install --prefix bb/bulletin-board-app
 
       # Log in to Docker Hub
       - name: Log in to Docker Hub
@@ -29,11 +29,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Build and push the Docker image
+      # Build and push Docker image
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: bulletin-board-app
-          file: bulletin-board-app/Dockerfile
+          context: bb/bulletin-board-app
+          file: bb/bulletin-board-app/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/itm350-${{ secrets.DOCKER_USERNAME }}-bb:1.0
