@@ -12,20 +12,18 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v4
 
-      # Step 2: Search for package.json
-      - name: Search for package.json
-        id: search-package-json
+      # Step 2: Search for or create package.json
+      - name: Ensure package.json exists
         run: |
-          echo "Searching for package.json in the repository..."
-          PACKAGE_JSON_PATH=$(find . -type f -name "package.json")
-          if [ -z "$PACKAGE_JSON_PATH" ]; then
-            echo "No package.json found in the repository."
-            echo "Creating a placeholder package.json in bulletin-board-app..."
+          echo "Searching for package.json..."
+          if [ ! -f bulletin-board-app/package.json ]; then
+            echo "package.json not found in bulletin-board-app."
+            echo "Creating a placeholder package.json..."
             mkdir -p bulletin-board-app
             echo '{}' > bulletin-board-app/package.json
             echo "Placeholder package.json created."
           else
-            echo "Found package.json at $PACKAGE_JSON_PATH"
+            echo "package.json found in bulletin-board-app."
           fi
 
       # Step 3: Debug directory structure
@@ -33,6 +31,8 @@ jobs:
         run: |
           echo "Listing directory structure..."
           ls -R
+          echo "Verifying contents of package.json..."
+          cat bulletin-board-app/package.json || echo "package.json not found"
 
       # Step 4: Install dependencies
       - name: Install dependencies
