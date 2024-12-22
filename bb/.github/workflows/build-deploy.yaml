@@ -12,6 +12,11 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
+      # Debug: List directory structure
+      - name: Debug repository structure
+        run: |
+          ls -R
+
       # Install dependencies
       - name: Install dependencies
         run: |
@@ -28,7 +33,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: bulletin-board-app       # Context where Dockerfile is located
-          file: bulletin-board-app/Dockerfile  # Path to the Dockerfile
+          context: bulletin-board-app
+          file: bulletin-board-app/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/itm350-${{ secrets.DOCKER_USERNAME }}-bb:1.0
