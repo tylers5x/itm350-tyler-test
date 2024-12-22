@@ -1,0 +1,46 @@
+on:
+  pull_request:
+    branches: 
+      - main
+    types:
+      - closed
+env:
+  REPO_NAME: tylers5x/itm350-tylers5x-bb
+
+jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo The PR was merged
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - run: |
+          npm install
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REPO_NAME }}
+          tags: |
+            type=sha  
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tag_with_sha: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
