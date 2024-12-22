@@ -1,57 +1,38 @@
 on:
   push:
-    branches:
-      - build-automation
+    branches: 
+      - main
+env:
+  REPO_NAME: tylers5x/itm350-tylers5x-bb
 
 jobs:
-  build_and_push:
+  if_pushed:
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Check out the repository
-      - name: Check out the repository
+      - name: Check out the repo
         uses: actions/checkout@v4
 
-      # Step 2: Search for or create package.json
-      - name: Ensure package.json exists
-        run: |
-          echo "Searching for package.json..."
-          if [ ! -f bulletin-board-app/package.json ]; then
-            echo "package.json not found in bulletin-board-app."
-            echo "Creating a placeholder package.json..."
-            mkdir -p bulletin-board-app
-            echo '{}' > bulletin-board-app/package.json
-            echo "Placeholder package.json created."
-          else
-            echo "package.json found in bulletin-board-app."
-          fi
-
-      # Step 3: Debug directory structure
-      - name: Debug directory structure
-        run: |
-          echo "Listing directory structure..."
-          ls -R
-          echo "Verifying contents of package.json..."
-          cat bulletin-board-app/package.json || echo "package.json not found"
-
-      # Step 4: Install dependencies
       - name: Install dependencies
         run: |
-          echo "Installing dependencies in bulletin-board-app..."
-          npm install --prefix bulletin-board-app || echo "npm install failed"
-
-      # Step 5: Log in to Docker Hub
+          npm install --prefix bulletin-board-app
       - name: Log in to Docker Hub
-        uses: docker/login-action@v4
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 6: Build and push Docker image
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
         with:
-          context: bulletin-board-app
-          file: bulletin-board-app/Dockerfile
+          images: ${{ env.REPO_NAME }}
+          tags: |
+            type=sha  
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: ./bulletin-board-app           # Specify the directory containing Dockerfile
+          file: ./bulletin-board-app/Dockerfile   # Path to Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/itm350-${{ secrets.DOCKER_USERNAME }}-bb:1.0
+          tags: ${{ env.REPO_NAME }}:latest
